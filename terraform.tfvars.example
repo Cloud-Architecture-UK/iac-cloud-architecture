@@ -1,0 +1,7 @@
+# Copy to terraform.tfvars and fill in. Or set ARM_SUBSCRIPTION_ID in the environment.
+# subscription_id     = "00000000-0000-0000-0000-000000000000"
+# location            = "westeurope"
+# static_web_app_name = "swa-cloud-architecture"
+# sku_tier            = "Standard"
+# sku_size            = "Standard"
+# custom_domain       = "www.cloud-architecture.co.uk"
