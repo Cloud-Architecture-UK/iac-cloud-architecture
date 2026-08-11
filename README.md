@@ -1,10 +1,25 @@
 # iac-cloud-architecture
 
-Terraform to stand up the Azure hosting for an Astro blog: a resource group and one **Azure Static Web App** (Standard SKU, for password protection, custom domains, and an SLA). Run it once and you have somewhere to deploy to.
+Infrastructure to stand up the Azure hosting for an Astro blog: a resource group and one **Azure Static Web App** (Standard SKU, for password protection, custom domains, and an SLA). Run it once and you have somewhere to deploy to.
 
-This is the infrastructure behind [cloud-architecture.co.uk](https://www.cloud-architecture.co.uk). The full walkthrough, portal steps and all, is in the post: [Why This Site Exists, and How I Built It](https://www.cloud-architecture.co.uk/blog/why-this-site-exists/).
+Two equivalent paths are provided, both landing at the same place:
 
-Site deployment is **decoupled**: the site repo deploys via its own GitHub Actions workflow using the `deployment_token` output from here. No portal linkage, so either side can be rebuilt without touching the other.
+- **`provision.ps1`** - the Az PowerShell module. Reach for this if you already live in PowerShell; it is the same language as the [Build and Secure Microsoft 365](https://www.cloud-architecture.co.uk/blog/) guides.
+- **Terraform** (`*.tf`) - declarative and reviewed in a pull request, so the whole thing rebuilds from scratch on demand. This is what I keep for infrastructure projects.
+
+This is the infrastructure behind [cloud-architecture.co.uk](https://www.cloud-architecture.co.uk). The full walkthrough, portal steps and all, is in the post: [How I Built This Site, Step by Step](https://www.cloud-architecture.co.uk/blog/why-this-site-exists/).
+
+Site deployment is **decoupled**: the site repo deploys via its own GitHub Actions workflow using the deployment token these produce. No portal linkage, so either side can be rebuilt without touching the other.
+
+## Deploy with PowerShell
+
+```powershell
+Connect-AzAccount
+./provision.ps1 -SubscriptionId <your-subscription-id>
+# optional: -CustomDomain www.cloud-architecture.co.uk
+```
+
+It creates the resource group and Static Web App (idempotent, so re-running is safe), then prints the deployment token to add as the site repo's `AZURE_STATIC_WEB_APPS_API_TOKEN` secret. Requires the `Az.Resources` and `Az.Websites` modules (`Install-Module Az`).
 
 ## Prerequisites
 
@@ -12,7 +27,7 @@ Site deployment is **decoupled**: the site repo deploys via its own GitHub Actio
 - Azure CLI, logged in with `az login`
 - `export ARM_SUBSCRIPTION_ID=<your-subscription-id>` (azurerm v4 requires it)
 
-## Deploy (run once)
+## Deploy with Terraform
 
 ```bash
 az login
