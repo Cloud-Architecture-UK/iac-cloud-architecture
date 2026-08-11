@@ -74,7 +74,10 @@ if ($CustomDomain) {
 
 # Deployment token. Paste this into the site repo's GitHub secret AZURE_STATIC_WEB_APPS_API_TOKEN.
 # You can also read it from the portal under the app's "Manage deployment token".
-$token = (Get-AzStaticWebAppSecret -Name $StaticWebAppName -ResourceGroupName $ResourceGroupName).Property.apiKey
+# Pulled via the ARM listSecrets action, which is stable across Az module versions
+# (the Get-AzStaticWebAppSecret object shape has shifted between releases).
+$swaId = (Get-AzStaticWebApp -Name $StaticWebAppName -ResourceGroupName $ResourceGroupName).Id
+$token = ((Invoke-AzRestMethod -Method POST -Path "$swaId/listSecrets?api-version=2024-04-01").Content | ConvertFrom-Json).properties.apiKey
 
 Write-Host ''
 Write-Host 'Deployment token (add as GitHub secret AZURE_STATIC_WEB_APPS_API_TOKEN in the site repo):'
